@@ -29,9 +29,10 @@ let Repo = mongoose.model('Repo', repoSchema);
  */
 let save = (username, repoData) => {
   const repos = repoData.map((repo) => {
-    return {
+    return new Repo({
       username: username,
       reponame: repo.name,
+      owner: repo.owner.login,
       url: repo.html_url,
       description: repo.description,
       created: repo.created_at,
@@ -40,10 +41,35 @@ let save = (username, repoData) => {
       stargazers: repo.stargazers_count,
       watchers: repo.watchers_count,
       forks: repo.forks,
-    };
+    });
   });
 
-  Repo.insertMany(repos, { upsert: true });
+  // TODO: fix this. I should not have to drop documents every time
+  return Repo.deleteMany({ username })
+    .then((result) =>
+      console.log(`deleted ${result.deletedCount} records from ${username}`)
+    )
+    .then(() => Repo.insertMany(repos))
+    .then((result) => {
+      console.log(`wrote ${result.length} records to ${username}`);
+      return result;
+    })
+    .then(() => getTopRepos());
 };
 
-module.exports.save = save;
+const getTopRepos = (username) => {
+  const query = username ? { username } : {};
+
+  return Repo.find(query)
+    .sort({
+      stargazers: 'desc',
+      watchers: 'desc',
+      forks: 'desc',
+    })
+    .limit(25);
+};
+
+module.exports = {
+  save,
+  getTopRepos,
+};
