@@ -19,11 +19,11 @@ app.post('/repos', function (req, res) {
   console.log(`Serving POST to /repos for username ${username}`);
 
   getReposByUsername(username)
-    .then((results) => {
-      res.status(201).send(results);
-      return results;
+    .then((repos) => {
+      res.status(201).send(repos);
+      return repos;
     })
-    // .then(db.save(username, results))
+    .then((repos) => db.save(username, repos))
     .catch((err) => {
       console.log('Something went wrong in app.post');
       console.error(err);
