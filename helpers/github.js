@@ -1,14 +1,14 @@
 const axios = require('axios');
-const config = require('../config.js');
+require('dotenv').config();
 
 let getReposByUsername = (username) => {
   return axios({
     url: `https://api.github.com/users/${username}/repos`,
     headers: {
       'User-Agent': 'request',
-      'Authorization': `token ${config.TOKEN}`
+      Authorization: process.env.GITHUB_TOKEN,
     },
   }).then((response) => response.data);
-}
+};
 
 module.exports.getReposByUsername = getReposByUsername;
