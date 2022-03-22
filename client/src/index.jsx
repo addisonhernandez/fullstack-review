@@ -18,12 +18,31 @@ class App extends React.Component {
       method: 'POST',
       url: '/repos',
       data: { username: term },
-      success: (result) => {
-        if (result && result.length) {
-          this.setState({ repos: result });
+      success: (repos) => {
+        if (repos && repos.length) {
+          this.setState({ repos });
         }
       },
-      error: (err) => console.log('something went wrong during ajax'),
+      error: (err) => {
+        console.log('Error during POST request to /repos');
+        console.error(err);
+      },
+    });
+  }
+
+  componentDidMount() {
+    $.ajax({
+      method: 'GET',
+      url: '/repos',
+      success: (repos) => {
+        if (repos && repos.length) {
+          this.setState({ repos });
+        }
+      },
+      error: (err) => {
+        console.log('Error during GET request to /repos');
+        console.error(err);
+      }
     });
   }
 
@@ -31,8 +50,8 @@ class App extends React.Component {
     return (
       <>
         <h1>Github Fetcher</h1>
-        <RepoList repos={this.state.repos} />
         <Search onSearch={this.search.bind(this)} />
+        <RepoList repos={this.state.repos} />
       </>
     );
   }
