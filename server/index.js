@@ -16,23 +16,25 @@ app.post('/repos', function (req, res) {
   // save the repo information in the database
 
   const { username } = req.body;
+
+  if (!username) {
+    res.status(404).end();
+    return;
+  }
+
   console.log(`Serving POST to /repos for username ${username}`);
 
   getReposByUsername(username)
-    .then((repos) => {
-      res.status(201).send(repos);
-      return repos;
-    })
     .then((repos) => db.save(username, repos))
+    .then((repos) => res.status(201).send(repos))
     .catch((err) => {
-      console.log('Something went wrong in app.post');
+      console.log('Something went wrong while serving POST to /repos');
       console.error(err);
     });
 });
 
 app.get('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should send back the top 25 repos
+  db.getTopRepos().then((repos) => res.status(200).send(repos));
 });
 
 let port = 1128;
