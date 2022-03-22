@@ -10,11 +10,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.post('/repos', function (req, res) {
-  // TODO - your code here!
-  // This route should take the github username provided
-  // and get the repo information from the github API, then
-  // save the repo information in the database
-
   const { username } = req.body;
 
   if (!username) {
