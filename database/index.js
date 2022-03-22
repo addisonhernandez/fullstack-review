@@ -57,7 +57,7 @@ let save = (username, repoData) => {
     .then(() => getTopRepos());
 };
 
-const getTopRepos = (username) => {
+const getTopRepos = (username, limit = 25) => {
   const query = username ? { username } : {};
 
   return Repo.find(query)
@@ -66,7 +66,7 @@ const getTopRepos = (username) => {
       watchers: 'desc',
       forks: 'desc',
     })
-    .limit(25);
+    .limit(limit);
 };
 
 module.exports = {
